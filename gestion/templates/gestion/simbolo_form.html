@@ -1,0 +1,63 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}{{ titulo }} - Petroglifos Maule{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card { padding: 28px; }
+    form p { margin-bottom: 16px; }
+    form label { display: block; margin-bottom: 6px; font-weight: 600; color: var(--muted); }
+    form input[type="text"], form input[type="file"], form select, form textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid var(--stroke);
+        border-radius: 12px;
+        font-size: 0.95rem;
+    }
+    .section-title { margin-top: 24px; font-family: 'Playfair Display', serif; }
+    .actions { display: flex; gap: 12px; align-items: center; margin-top: 18px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+    <h1 class="page-title">{{ titulo }}</h1>
+    <p class="muted">Completa la informacion basica y adjunta una o varias imagenes.</p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <h2 class="section-title">Datos de la investigacion</h2>
+        {{ simbolo_form.as_p }}
+
+        <h2 class="section-title">Galeria de imagenes</h2>
+        {{ archivos_form.as_p }}
+
+        {% if modo_edicion and archivos_multimedia %}
+            <div class="section-title">Imagenes existentes</div>
+            <div class="actions" style="flex-wrap: wrap; gap: 16px;">
+                {% for media in archivos_multimedia %}
+                    {% if media.tipo_archivo == 'FOTO' %}
+                        <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start;">
+                            <img src="{{ media.archivo.url }}" alt="Imagen" style="width: 140px; height: 100px; object-fit: cover; border-radius: 10px; border: 1px solid var(--stroke);">
+                            <label style="display: flex; gap: 6px; align-items: center;">
+                                <input type="radio" name="principal_id" value="{{ media.id }}" {% if media.es_principal %}checked{% endif %}>
+                                Principal
+                            </label>
+                            <label style="display: flex; gap: 6px; align-items: center;">
+                                <input type="checkbox" name="eliminar_ids" value="{{ media.id }}">
+                                Eliminar
+                            </label>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="actions">
+            <button type="submit" class="btn">Guardar</button>
+            <a href="{% url 'gestion:mis_investigaciones' %}" class="btn-ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

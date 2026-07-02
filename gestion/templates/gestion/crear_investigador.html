@@ -1,0 +1,31 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}Crear investigador - Petroglifos Maule{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card { padding: 28px; }
+    form { display: flex; flex-direction: column; gap: 16px; }
+    form label { font-weight: 600; color: var(--muted); }
+    form input { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--stroke); }
+    .actions { display: flex; gap: 12px; align-items: center; }
+    .hint { font-size: 0.85rem; color: var(--muted); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+    <h1 class="page-title">Crear investigador</h1>
+    <p class="muted">Esta accion solo esta disponible para administradores.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p class="hint">El investigador podra iniciar sesion con este usuario y contrasena.</p>
+        <div class="actions">
+            <button type="submit" class="btn">Crear usuario</button>
+            <a href="{% url 'gestion:mis_investigaciones' %}" class="btn-ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

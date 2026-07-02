@@ -1,0 +1,31 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}Rutas del servidor - Petroglifos Maule{% endblock %}
+
+{% block content %}
+<div class="card" style="padding: 28px;">
+    <h1 class="page-title">Rutas del servidor</h1>
+    <p class="muted">Estas ubicaciones son utiles para respaldos manuales o revisiones.</p>
+
+    <div style="margin-top: 18px; display: grid; gap: 12px;">
+        <div>
+            <strong>Base de datos:</strong>
+            <div class="muted">{{ db_path }}</div>
+        </div>
+        <div>
+            <strong>Carpeta de medios:</strong>
+            <div class="muted">{{ media_root }}</div>
+        </div>
+        <div>
+            <strong>Carpeta de backups:</strong>
+            <div class="muted">{{ backup_root }}</div>
+        </div>
+    </div>
+
+    <div style="margin-top: 22px;">
+        <h2>Respaldo manual</h2>
+        <p class="muted">Puedes ejecutar este comando cuando quieras crear un respaldo:</p>
+        <pre style="background: #f7f2e8; padding: 12px; border-radius: 10px;">.\venv\Scripts\python.exe manage.py backup</pre>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}{{ titulo }} - Petroglifos Maule{% endblock %}
+
+{% block extra_css %}
+<style>
+    .catalog-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .catalog-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .catalog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 22px;
+    }
+
+    .catalog-card {
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.2s ease;
+    }
+
+    .catalog-card:hover { transform: translateY(-4px); }
+
+    .card-media {
+        height: 180px;
+        background: linear-gradient(120deg, #d8c7a6, #f1e6d1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #7a6b52;
+        font-weight: 600;
+    }
+
+    .card-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .card-body {
+        padding: 16px 18px 18px;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        margin: 0 0 8px;
+    }
+
+    .card-meta {
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin: 0 0 10px;
+    }
+
+    .card-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    .tag {
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        background: var(--bg-accent);
+        color: #4f4332;
+        border: 1px solid var(--stroke);
+    }
+
+    .empty-state {
+        padding: 24px;
+        background: var(--card);
+        border: 1px dashed var(--stroke);
+        border-radius: 16px;
+        text-align: center;
+    }
+
+    @media (max-width: 720px) {
+        .catalog-header { flex-direction: column; align-items: flex-start; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="catalog-header">
+    <div>
+        <h1 class="page-title">{{ titulo }}</h1>
+        <p class="muted">Tu espacio de trabajo con acceso rapido a todas las investigaciones.</p>
+    </div>
+    <div class="catalog-actions">
+        {% if vista == 'mis' %}
+            <a class="btn-outline" href="{% url 'gestion:catalogo_todas' %}">Ver todas</a>
+        {% else %}
+            <a class="btn-outline" href="{% url 'gestion:mis_investigaciones' %}">Ver solo mis investigaciones</a>
+        {% endif %}
+        <a class="btn" href="{% url 'gestion:crear_simbolo' %}">Añadir nueva investigacion</a>
+    </div>
+</div>
+
+{% if simbolos %}
+<div class="catalog-grid">
+    {% for simbolo in simbolos %}
+        <a class="catalog-card card" href="{% url 'gestion:simbolo_detalle' simbolo.id %}?vista={{ vista }}">
+            <div class="card-media">
+                {% if simbolo.imagen_url %}
+                    <img src="{{ simbolo.imagen_url }}" alt="Imagen de {{ simbolo.codigo }}">
+                {% else %}
+                    Sin imagen
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">{{ simbolo.codigo }}</h3>
+                <p class="card-meta"><strong>Sitio:</strong> {{ simbolo.panel.bloque.sitio.nombre }}</p>
+                <div class="card-tags">
+                    <span class="tag">Tipo: {{ simbolo.iconografia|default:"Sin tipo" }}</span>
+                    <span class="tag">Estado: {{ simbolo.get_estado_conservacion_display|default:"Sin evaluar" }}</span>
+                </div>
+                <p class="muted">{{ simbolo.descripcion|truncatewords:18|default:"Sin descripcion disponible" }}</p>
+            </div>
+        </a>
+    {% endfor %}
+</div>
+{% else %}
+    <div class="empty-state">
+        <h3>No hay investigaciones en esta vista</h3>
+        <p class="muted">Crea una nueva investigacion para empezar a trabajar con el catalogo.</p>
+    </div>
+{% endif %}
+{% endblock %}

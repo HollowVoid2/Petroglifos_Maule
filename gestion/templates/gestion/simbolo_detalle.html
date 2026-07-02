@@ -1,0 +1,67 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}Detalle de {{ simbolo.codigo }} - Petroglifos Maule{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detail-card { padding: 28px; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 16px 28px; margin-top: 18px; }
+    .detail-grid strong { color: var(--muted); }
+    .section { margin-top: 24px; }
+    .media-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .media-gallery img { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; }
+    .file-link { padding: 12px; border: 1px solid var(--stroke); border-radius: 10px; text-decoration: none; color: var(--ink); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card detail-card">
+    <h1 class="page-title">Detalle de la Investigacion: {{ simbolo.codigo }}</h1>
+
+    <div class="detail-grid">
+        <strong>Codigo:</strong> <span>{{ simbolo.codigo }}</span>
+        <strong>Autor:</strong> <span>{{ simbolo.autor.username|default:"No asignado" }}</span>
+        <strong>Fecha de creacion:</strong> <span>{{ simbolo.fecha_creacion|date:"d/m/Y H:i" }}</span>
+        <strong>Ultima modificacion:</strong> <span>{{ simbolo.fecha_modificacion|date:"d/m/Y H:i" }}</span>
+
+        <strong>Sitio:</strong> <span>{{ simbolo.panel.bloque.sitio.nombre }}</span>
+        <strong>Bloque:</strong> <span>{{ simbolo.panel.bloque.codigo }}</span>
+        <strong>Panel:</strong> <span>{{ simbolo.panel.codigo }}</span>
+
+        <strong>Tipo / Motivo:</strong> <span>{{ simbolo.iconografia|default:"Sin tipo" }}</span>
+        <strong>Estado:</strong> <span>{{ simbolo.get_estado_conservacion_display|default:"Sin evaluar" }}</span>
+    </div>
+
+    <div class="section">
+        <h2>Descripcion</h2>
+        <p>{{ simbolo.descripcion|linebreaks|default:"No hay descripcion disponible." }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Galeria multimedia</h2>
+        <div class="media-gallery">
+            {% for media in archivos_multimedia %}
+                {% if media.tipo_archivo == 'FOTO' %}
+                    <a href="{{ media.archivo.url }}" target="_blank">
+                        <img src="{{ media.archivo.url }}" alt="Foto de {{ simbolo.codigo }}">
+                    </a>
+                {% else %}
+                    <a class="file-link" href="{{ media.archivo.url }}" target="_blank">Ver calco (PDF)</a>
+                {% endif %}
+            {% empty %}
+                <p class="muted">No hay archivos multimedia para este simbolo.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if can_edit %}
+    <div class="section">
+        <a class="btn" href="{% url 'gestion:editar_simbolo' simbolo.id %}">Editar investigacion</a>
+    </div>
+    {% endif %}
+
+    <div class="section">
+        <a class="btn-outline" href="{% url volver_url %}">&larr; Volver</a>
+    </div>
+</div>
+{% endblock %}

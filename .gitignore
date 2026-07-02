@@ -1,0 +1,14 @@
+venv/ 
+db.sqlite3 
+__pycache__/ 
+*.pyc 
+*.pyo 
+*.pyd 
+.Python 
+media/ 
+*.log 
+.DS_Store 
+.vscode/ 
+.idea/ 
+*.sqlite3 
+backups/ 
