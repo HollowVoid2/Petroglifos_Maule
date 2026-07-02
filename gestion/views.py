@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
 from django.conf import settings
-from .models import Simbolo, ArchivoMultimedia
+from .models import Simbolo, ArchivoMultimedia, Sitio 
 from .forms import SimboloForm, ArchivosMultipleForm, InvestigadorCreationForm
 
 
@@ -187,3 +188,69 @@ def rutas_servidor(request):
         'backup_root': settings.BACKUP_ROOT,
     }
     return render(request, 'gestion/rutas.html', context)
+
+# ========== VISTAS PÚBLICAS PARA VISITANTES ==========
+
+def home_public(request):
+    """
+    Página de inicio para visitantes no registrados.
+    Muestra los símbolos más recientes y estadísticas.
+    """
+    from django.db.models import Count
+    
+    # Obtener solo símbolos activos (públicos)
+    simbolos_recientes = Simbolo.objects.filter(
+        esta_activo=True
+    ).select_related('panel__bloque__sitio', 'autor').order_by('-fecha_creacion')[:9]
+    
+    # Adjuntar imagen principal a cada símbolo
+    for simbolo in simbolos_recientes:
+        imagen_principal = simbolo.multimedia.filter(es_principal=True).first()
+        simbolo.imagen_url = imagen_principal.archivo.url if imagen_principal and imagen_principal.archivo else None
+        # Obtener ubicación completa
+        simbolo.ubicacion = f"{simbolo.panel.bloque.sitio.nombre}, {simbolo.panel.bloque.sitio.comuna}"
+    
+    # Estadísticas
+    total_simbolos = Simbolo.objects.filter(esta_activo=True).count()
+    total_sitios = Sitio.objects.filter(esta_activo=True).count()
+    total_investigadores = User.objects.filter(simbolos_creados__isnull=False).distinct().count()
+    
+    context = {
+        'simbolos': simbolos_recientes,
+        'total_simbolos': total_simbolos,
+        'total_sitios': total_sitios,
+        'total_investigadores': total_investigadores,
+    }
+    return render(request, 'gestion/home.html', context)
+
+
+def publico_detalle(request, simbolo_id):
+    """
+    Vista pública del detalle de un símbolo.
+    Cualquier visitante puede verlo.
+    """
+    simbolo = get_object_or_404(Simbolo, pk=simbolo_id, esta_activo=True)
+    
+    # Obtener todas las imágenes
+    imagenes = simbolo.multimedia.all()
+    
+    # Obtener la imagen principal
+    imagen_principal = imagenes.filter(es_principal=True).first()
+    
+    # Información de ubicación completa
+    ubicacion = {
+        'sitio': simbolo.panel.bloque.sitio.nombre,
+        'comuna': simbolo.panel.bloque.sitio.comuna,
+        'coordenadas': simbolo.panel.bloque.sitio.coordenadas_gps,
+        'bloque': simbolo.panel.bloque.codigo,
+        'panel': simbolo.panel.codigo,
+    }
+    
+    context = {
+        'simbolo': simbolo,
+        'imagenes': imagenes,
+        'imagen_principal': imagen_principal,
+        'ubicacion': ubicacion,
+        'investigador': simbolo.autor,
+    }
+    return render(request, 'gestion/publico_detalle.html', context)

@@ -22,13 +22,14 @@ from django.contrib.auth import views as auth_views
 from gestion import views as gestion_views
 
 urlpatterns = [
+    # === RUTA RAÍZ (ahora va a home pública) ===
+    path('', include('gestion.urls')),  # Esto hace que / muestre home_public
+    
     path('admin/', admin.site.urls),
     path('login/', auth_views.LoginView.as_view(template_name='gestion/login.html'), name='login'),
     path('logout/', gestion_views.logout_usuario, name='logout'),
     path('publico/', gestion_views.publico_placeholder, name='publico'),
-    path('gestion/', include('gestion.urls', namespace='gestion')),
 ]
 
-# Añadir esta línea para servir archivos multimedia en modo de desarrollo
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

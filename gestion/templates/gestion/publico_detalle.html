@@ -1,0 +1,107 @@
+{% extends 'gestion/base_publica.html' %}
+{% load static %}
+
+{% block title %}{{ simbolo.codigo }} - Petroglifos del Maule{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Botón volver -->
+    <div class="mb-4">
+        <a href="{% url 'gestion:home_public' %}" class="btn btn-outline-dark">
+            <i class="fas fa-arrow-left"></i> Volver al inicio
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- COLUMNA IZQUIERDA: Imagen -->
+        <div class="col-lg-6">
+            {% if imagen_principal %}
+                <img src="{{ imagen_principal.archivo.url }}" 
+                     alt="{{ simbolo.codigo }}"
+                     class="img-fluid rounded-3 shadow"
+                     style="width: 100%; max-height: 500px; object-fit: contain; background: #f0ece6;">
+            {% else %}
+                <div style="height: 400px; background: #e0d5c8; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+                    <i class="fas fa-image" style="font-size: 5rem; opacity: 0.2;"></i>
+                </div>
+            {% endif %}
+
+            <!-- Galería de imágenes (si hay más de una) -->
+            {% if imagenes|length > 1 %}
+                <div class="mt-3 d-flex gap-2 flex-wrap">
+                    {% for img in imagenes %}
+                        <img src="{{ img.archivo.url }}" 
+                             alt="Imagen {{ forloop.counter }}"
+                             class="rounded-3"
+                             style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 2px solid {% if img.es_principal %}#c9a84c{% else %}transparent{% endif %};"
+                             onclick="this.parentElement.parentElement.previousElementSibling.querySelector('img').src = this.src">
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- COLUMNA DERECHA: Información -->
+        <div class="col-lg-6">
+            <div class="bg-white p-4 rounded-3 shadow-sm">
+                <h1 class="display-6 fw-bold" style="font-family: 'Playfair Display', serif;">
+                    {{ simbolo.codigo }}
+                </h1>
+
+                <!-- Ubicación -->
+                <div class="mt-3 p-3 bg-light rounded-3">
+                    <h6 class="fw-bold"><i class="fas fa-map-pin" style="color: #c9a84c;"></i> Ubicación</h6>
+                    <p class="mb-1"><strong>Sitio:</strong> {{ ubicacion.sitio }}</p>
+                    <p class="mb-1"><strong>Comuna:</strong> {{ ubicacion.comuna }}</p>
+                    <p class="mb-1"><strong>Coordenadas:</strong> {{ ubicacion.coordenadas }}</p>
+                    <p class="mb-0"><strong>Bloque/Panel:</strong> {{ ubicacion.bloque }} / {{ ubicacion.panel }}</p>
+                </div>
+
+                <!-- Descripción -->
+                {% if simbolo.descripcion %}
+                    <div class="mt-3">
+                        <h6 class="fw-bold"><i class="fas fa-align-left" style="color: #c9a84c;"></i> Descripción</h6>
+                        <p>{{ simbolo.descripcion|linebreaks }}</p>
+                    </div>
+                {% endif %}
+
+                <!-- Iconografía -->
+                {% if simbolo.iconografia %}
+                    <div class="mt-2">
+                        <h6 class="fw-bold"><i class="fas fa-tag" style="color: #c9a84c;"></i> Iconografía</h6>
+                        <span class="badge bg-secondary">{{ simbolo.iconografia }}</span>
+                    </div>
+                {% endif %}
+
+                <!-- Estado de conservación -->
+                {% if simbolo.estado_conservacion %}
+                    <div class="mt-2">
+                        <h6 class="fw-bold"><i class="fas fa-heartbeat" style="color: #c9a84c;"></i> Estado de Conservación</h6>
+                        <span class="badge 
+                            {% if simbolo.estado_conservacion == 'BUENO' %}bg-success
+                            {% elif simbolo.estado_conservacion == 'ACEPTABLE' %}bg-info
+                            {% elif simbolo.estado_conservacion == 'EN_RIESGO' %}bg-warning
+                            {% elif simbolo.estado_conservacion == 'MALO' %}bg-danger
+                            {% else %}bg-secondary{% endif %}
+                        ">
+                            {{ simbolo.get_estado_conservacion_display }}
+                        </span>
+                    </div>
+                {% endif %}
+
+                <!-- Investigador -->
+                {% if investigador %}
+                    <div class="mt-3 pt-3 border-top">
+                        <p class="small text-muted">
+                            <i class="fas fa-user"></i> Documentado por: 
+                            <strong>{{ investigador.get_full_name|default:investigador.username }}</strong>
+                        </p>
+                        <p class="small text-muted">
+                            <i class="fas fa-calendar"></i> Fecha: {{ simbolo.fecha_creacion|date:"d/m/Y" }}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

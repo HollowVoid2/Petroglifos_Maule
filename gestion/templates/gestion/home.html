@@ -1,0 +1,124 @@
+{% extends 'gestion/base_publica.html' %}
+{% load static %}
+
+{% block title %}Inicio - Petroglifos del Maule{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-1 fw-bold mb-3">
+                    <i class="fas fa-mountain text-gold" style="color: #c9a84c;"></i> 
+                    Petroglifos<br><span style="color: #c9a84c;">del Maule</span>
+                </h1>
+                <p class="lead mb-4" style="opacity: 0.9; font-size: 1.3rem;">
+                    Sistema de documentación y preservación del patrimonio rupestre 
+                    de la región del Maule, Chile.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="#explorar" class="btn btn-gold btn-lg">
+                        <i class="fas fa-search"></i> Explorar Petroglifos
+                    </a>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-user-plus"></i> Área de Investigadores
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block">
+                <div class="text-center">
+                    <i class="fas fa-archway" style="font-size: 8rem; color: #c9a84c; opacity: 0.6;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ESTADÍSTICAS -->
+<section class="py-5" style="background: white;">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="stat-box bg-light">
+                    <div class="number">{{ total_simbolos }}</div>
+                    <div class="label text-muted">
+                        <i class="fas fa-paint-brush"></i> Petroglifos documentados
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-box bg-light">
+                    <div class="number">{{ total_sitios }}</div>
+                    <div class="label text-muted">
+                        <i class="fas fa-map-marked-alt"></i> Sitios arqueológicos
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-box bg-light">
+                    <div class="number">{{ total_investigadores }}</div>
+                    <div class="label text-muted">
+                        <i class="fas fa-users"></i> Investigadores activos
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- GALERÍA DE PETROGLIFOS -->
+<section id="explorar" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold" style="font-family: 'Playfair Display', serif;">
+                <i class="fas fa-gem" style="color: #c9a84c;"></i> 
+                Petroglifos Destacados
+            </h2>
+            <p class="text-muted">Explora algunos de los petroglifos documentados en la región del Maule</p>
+        </div>
+
+        {% if simbolos %}
+            <div class="row g-4">
+                {% for simbolo in simbolos %}
+                    <div class="col-md-4">
+                        <div class="card-publico">
+                            {% if simbolo.imagen_url %}
+                                <img src="{{ simbolo.imagen_url }}" alt="{{ simbolo.codigo }}" loading="lazy">
+                            {% else %}
+                                <div style="height: 220px; background: #e0d5c8; display: flex; align-items: center; justify-content: center; color: #8B4513;">
+                                    <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
+                                </div>
+                            {% endif %}
+                            <div class="p-4">
+                                <h5 class="fw-bold">{{ simbolo.codigo }}</h5>
+                                <p class="text-muted small">
+                                    <i class="fas fa-map-pin"></i> {{ simbolo.ubicacion|default:"Ubicación no disponible" }}
+                                </p>
+                                {% if simbolo.iconografia %}
+                                    <p class="small">
+                                        <span class="badge bg-secondary">{{ simbolo.iconografia }}</span>
+                                    </p>
+                                {% endif %}
+                                <p class="small text-muted">
+                                    {{ simbolo.descripcion|truncatewords:20|default:"Sin descripción" }}
+                                </p>
+                                <a href="{% url 'gestion:publico_detalle' simbolo.id %}" class="btn btn-outline-dark btn-sm w-100">
+                                    <i class="fas fa-eye"></i> Ver detalle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
+                        <p>No hay petroglifos disponibles aún. ¡Vuelve pronto!</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

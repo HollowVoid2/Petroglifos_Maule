@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Petroglifos del Maule{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #8B4513;
+            --gold-color: #c9a84c;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f5f0;
+            color: #2d2d2d;
+        }
+        .navbar-custom {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2a3a 100%);
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .navbar-custom .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            color: #c9a84c !important;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .navbar-custom .nav-link {
+            color: rgba(255,255,255,0.85) !important;
+            font-weight: 400;
+            transition: all 0.3s;
+        }
+        .navbar-custom .nav-link:hover {
+            color: #c9a84c !important;
+            transform: translateY(-2px);
+        }
+        .btn-gold {
+            background-color: #c9a84c;
+            color: #1a2a3a;
+            font-weight: 600;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        .btn-gold:hover {
+            background-color: #b8942e;
+            color: #1a2a3a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(201, 168, 76, 0.4);
+        }
+        .footer-custom {
+            background: linear-gradient(135deg, #1a2a3a 0%, #0d1b2a 100%);
+            color: rgba(255,255,255,0.7);
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+        .footer-custom a {
+            color: #c9a84c;
+            text-decoration: none;
+        }
+        .footer-custom a:hover {
+            text-decoration: underline;
+        }
+        .card-publico {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .card-publico:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        .card-publico img {
+            height: 220px;
+            object-fit: cover;
+            width: 100%;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+            padding: 5rem 0;
+            color: white;
+            border-bottom: 4px solid #c9a84c;
+        }
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-box .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #c9a84c;
+        }
+        .stat-box .label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        .badge-estado {
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'gestion:home_public' %}">
+                <i class="fas fa-mountain"></i> Petroglifos Maule
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'gestion:home_public' %}}">
+                            <i class="fas fa-home"></i> Inicio
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'gestion:mis_investigaciones' %}">
+                                <i class="fas fa-flask"></i> Mis Investigaciones
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">
+                                <i class="fas fa-sign-out-alt"></i> Salir
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="btn btn-gold" href="{% url 'login' %}">
+                                <i class="fas fa-user-lock"></i> Acceso Investigadores
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer-custom">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="text-gold">Petroglifos del Maule</h5>
+                    <p class="small">Sistema de documentación y gestión de patrimonio rupestre</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="small mb-0">
+                        <i class="fas fa-envelope"></i> contacto@petroglifosmaule.cl<br>
+                        <i class="fas fa-code"></i> Proyecto en desarrollo
+                    </p>
+                </div>
+            </div>
+            <hr class="border-light opacity-25">
+            <div class="text-center small">
+                &copy; {% now "Y" %} Petroglifos del Maule. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

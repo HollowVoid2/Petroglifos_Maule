@@ -148,7 +148,7 @@
                     <a href="/admin/" class="btn-ghost">Admin</a>
                     <a href="{% url 'gestion:rutas_servidor' %}" class="btn-ghost">Rutas</a>
                 {% endif %}
-                <a href="{% url 'publico' %}" class="btn-outline">Sitio publico</a>
+                <a href="{% url 'gestion:home_public' %}" class="btn-outline">Sitio publico</a>
             </nav>
             <div class="user-area">
                 <span>Hola, {{ user.username }}</span>
@@ -157,7 +157,7 @@
         {% else %}
             <div class="user-area">
                 <a href="{% url 'login' %}" class="btn">Entrar</a>
-                <a href="{% url 'publico' %}" class="btn-outline">Sitio publico</a>
+                <a href="{% url 'gestion:home_public' %}" class="btn-outline">Sitio publico</a>
             </div>
         {% endif %}
     </header>
