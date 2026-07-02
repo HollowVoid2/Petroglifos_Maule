@@ -5,6 +5,7 @@
 El siguiente diagrama representa la estructura de las principales entidades del sistema:
 
 ```mermaid
+
 classDiagram
     class Sitio {
         +nombre: str
@@ -57,4 +58,5 @@ classDiagram
     Panel "1" --> "0..*" Simbolo : contiene
     Simbolo "1" --> "0..*" ArchivoMultimedia : posee
     User "1" --> "0..*" Simbolo : documenta (autor)
+
 ```
